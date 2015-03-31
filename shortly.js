@@ -25,7 +25,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', 
 function(req, res) {
-  res.render('index');
+  res.render('signup');
 });
 
 app.get('/create', 
@@ -77,7 +77,14 @@ function(req, res) {
 /************************************************************/
 // Write your authentication routes here
 /************************************************************/
-
+app.post('/signup', function(req, res) {
+  new User({username: req.body.username, password: req.body.password})
+    .save()
+    .then(function(model) {
+      console.log(model)
+    })
+  // db.knex('users').set(userModel);
+});
 
 
 /************************************************************/
