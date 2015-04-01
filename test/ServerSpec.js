@@ -63,7 +63,7 @@ describe('', function() {
 
     var requestWithSession = request.defaults({jar: true});
 
-    xbeforeEach(function(done){      // create a user that we can then log-in with
+    beforeEach(function(done){      // create a user that we can then log-in with
       new User({
           'username': 'Phillip',
           'password': 'Phillip'
@@ -95,6 +95,7 @@ describe('', function() {
 
       requestWithSession(options, function(error, res, body) {
         // res comes from the request module, and may not follow express conventions
+        console.log(res.statusCode)
         expect(res.statusCode).to.equal(404);
         done();
       });
@@ -136,12 +137,12 @@ describe('', function() {
       it('Fetches the link url title', function (done) {
         requestWithSession(options, function(error, res, body) {
           db.knex('urls')
-            .where('title', '=', 'Rofl Zoo - Daily funny animal pictures')
+            .where('title', '=', 'Funny animal pictures, funny animals, funniest dogs')
             .then(function(urls) {
               if (urls['0'] && urls['0']['title']) {
                 var foundTitle = urls['0']['title'];
               }
-              expect(foundTitle).to.equal('Rofl Zoo - Daily funny animal pictures');
+              expect(foundTitle).to.equal('Funny animal pictures, funny animals, funniest dogs');
               done();
             });
         });
@@ -157,7 +158,7 @@ describe('', function() {
         // save a link to the database
         link = new Link({
           url: 'http://www.roflzoo.com/',
-          title: 'Rofl Zoo - Daily funny animal pictures',
+          title: 'Funny animal pictures, funny animals, funniest dogs',
           base_url: 'http://127.0.0.1:4568'
         });
         link.save().then(function(){
@@ -190,7 +191,7 @@ describe('', function() {
 
         requestWithSession(options, function(error, res, body) {
           var currentLocation = res.request.href;
-          expect(currentLocation).to.equal('http://www.roflzoo.com/');
+          expect(currentLocation).to.equal('http://roflzoo.com/');
           done();
         });
       });
@@ -202,7 +203,7 @@ describe('', function() {
         };
 
         requestWithSession(options, function(error, res, body) {
-          expect(body).to.include('"title":"Rofl Zoo - Daily funny animal pictures"');
+          expect(body).to.include('"title":"Funny animal pictures, funny animals, funniest dogs"');
           expect(body).to.include('"code":"' + link.get('code') + '"');
           done();
         });
@@ -230,6 +231,7 @@ describe('', function() {
 
     it('Redirects to login page if a user tries to see all of the links and is not signed in', function(done) {
       request('http://127.0.0.1:4568/links', function(error, res, body) {
+        console.log(res.req.path)
         expect(res.req.path).to.equal('/login');
         done();
       });

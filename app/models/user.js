@@ -15,7 +15,6 @@ var User = db.Model.extend({
     var user = this;
     bcrypt.hash(params.password, null, null, function(err, hash){
       user.set('password', hash);
-      console.log(params.password)
     })
   }
 });
